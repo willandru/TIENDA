@@ -53,9 +53,7 @@ const Summary = () => {
          <Currency value={totalPrice} />
         </div>
       </div>
-      <Button onClick={onCheckout} disabled={items.length === 0} className="w-full mt-6">
-        Checkout
-      </Button>
+ 
       <PayPalScriptProvider options={{ clientId: "AduVY56YuDHxaOTaQGuyVBxN2ZkHmrp4lYqHyDLaA82cG4ouE0QGbHvN2TWLNPUiM1Kv6HdPcs9TM0Qk"}}>
         <PayPalButtons
           style={{
@@ -74,6 +72,28 @@ const Summary = () => {
             });
           }}
           onClick={onCheckout}
+          onApprove={async (data, actions) => {
+            try {
+              const orderDetails = await actions.order?.get();
+
+              // Handle the response or use it as needed...
+              console.log('Data:', data);
+              console.log('Order Details:', orderDetails);
+
+              //const orderId = await myOrderID(); // Await the result of myOrderID
+
+              await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout-approved`, {
+                data,
+                orderDetails,
+              });
+            } catch (error) {
+              // Handle errors...
+              console.error(error);
+            }
+          }}
+          onCancel={(data) => {
+            console.log("It has been canceled: ", data);
+          }}
         />
       </PayPalScriptProvider>
     </div>
