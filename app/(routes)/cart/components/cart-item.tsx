@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import { toast } from "react-hot-toast";
-import { X } from "lucide-react";
+import { X , ChevronDown, ChevronUp} from "lucide-react";
 
 import IconButton from "@/components/ui/icon-button";
 import Currency from "@/components/ui/currency";
 import useCart from "@/hooks/use-cart";
 import { Product } from "@/types";
+import { useState } from "react";
 
 
 interface CartItemProps {
@@ -18,10 +19,23 @@ const CartItem: React.FC<CartItemProps> = ({
   data
 }) => {
   const cart = useCart();
+  const [quantity, setQuantity] = useState(1);
+
 
   const onRemove = () => {
     cart.removeItem(data.id);
   };
+
+
+  const handleIncrement = () => {
+    setQuantity((prevQuantity) => Math.max(1, prevQuantity + 1));
+  };
+
+  const handleDecrement = () => {
+    setQuantity((prevQuantity) => Math.max(1, prevQuantity - 1));
+  };
+
+  const precio= Number(data.price) * quantity;
 
   return ( 
     <li className="flex py-6 border-b">
@@ -48,8 +62,33 @@ const CartItem: React.FC<CartItemProps> = ({
             <p className="text-gray-500">{data.color.name}</p>
             <p className="ml-4 border-l border-gray-200 pl-4 text-gray-500">{data.size.name}</p>
           </div>
-          <Currency value={data.price} />
+          <Currency value={Number(data.price) * quantity} />
+
         </div>
+        <div className="relative ml-4 flex flex-1 flex-col justify-between sm:ml-6">
+        <div className="absolute z-10 right-0 top-0 mt-14">
+          <IconButton onClick={handleIncrement} icon={<ChevronUp size={15} style={{ marginBottom: '5px' }}/>} className="mb-2" />
+          <IconButton onClick={handleDecrement} icon={<ChevronDown size={15} style={{ marginTop: '5px' }} />} />
+        </div>
+        <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+          <div className="flex justify-between">
+            <p className=" text-lg font-semibold text-black">
+              
+            </p>
+          </div>
+
+          <div className=" flex text-sm items-center mt-20">
+            <p className="text-lg font-semibold text-black">Cantidad: </p>
+            <p className="ml-4 border flex items-center justify-center h-8 w-8 text-gray-500">
+            {quantity}
+            </p>
+          </div>
+
+          
+        </div>
+        
+      
+      </div> 
       </div>
     </li>
   );
