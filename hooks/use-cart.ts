@@ -10,6 +10,9 @@ interface CartStore {
   addItem: (data: Product) => void;
   removeItem: (id: string) => void;
   removeAll: () => void;
+  quantity: number;
+  value: string;
+  cartItems: { [productId: string]: number };
 }
 
 const useCart = create(
@@ -18,18 +21,37 @@ const useCart = create(
   addItem: (data: Product) => {
     const currentItems = get().items;
     const existingItem = currentItems.find((item) => item.id === data.id);
-    
+
     if (existingItem) {
-      return toast('Item already in cart.');
+      // Increment quantity if the item already exists
+      set({ items: [...get().items], cartItems: { ...get().cartItems, [data.id]: get().cartItems[data.id] + 1 } });
+      return toast('Item quantity incremented.');
     }
 
-    set({ items: [...get().items, data] });
+    // Add a new item with quantity 1
+    set({ items: [...get().items, data], cartItems: { ...get().cartItems, [data.id]: 1 } });
     toast.success('Item added to cart.');
   },
+  cartItems:{}
+  ,
   removeItem: (id: string) => {
-    set({ items: [...get().items.filter((item) => item.id !== id)] });
+    const updatedItems = [...get().items.filter((item) => item.id !== id)];
+    const updatedCartItems = { ...get().cartItems };
+
+    // Decrement quantity or remove the item from cartItems
+    if (updatedCartItems[id] > 1) {
+      updatedCartItems[id] -= 1;
+    } else {
+      delete updatedCartItems[id];
+    }
+
+    set({ items: updatedItems, cartItems: updatedCartItems });
     toast.success('Item removed from cart.');
   },
+  quantity: 1
+  ,
+  value:''
+  ,
   removeAll: () => set({ items: [] }),
 }), {
   name: 'cart-storage',
