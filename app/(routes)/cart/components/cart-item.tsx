@@ -28,11 +28,30 @@ const CartItem: React.FC<CartItemProps> = ({
 
 
   const handleIncrement = () => {
-    setQuantity((prevQuantity) => Math.max(1, prevQuantity + 1));
+    
+    const inStock = Number(data.quantityInStock);
+    const quantityInCart = quantity+1;
+    if(quantityInCart <= inStock){
+      setQuantity((prevQuantity) => Math.max(1, prevQuantity + 1));
+    }
+    else{
+      console.log('Out of Stock');
+      //toast.error('We run out of Stock¡');
+      
+    }   
+    
+    console.log("Increasing +1");
+    console.log(inStock);
+    console.log(quantityInCart);
+    
+    
   };
 
   const handleDecrement = () => {
     setQuantity((prevQuantity) => Math.max(1, prevQuantity - 1));
+    console.log("Decreasing -1");
+    console.log(quantity-1);
+
   };
 
   const precio= Number(data.price) * quantity;
