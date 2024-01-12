@@ -1,4 +1,4 @@
-//@/app/(routes)/cart/components/summary.tsx
+// @/app/(routes)/cart/components/summary.tsx
 
 "use client";
 
@@ -14,12 +14,9 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const Summary = () => {
   const searchParams = useSearchParams();
-  const items = useCart((state) => state.items);
-  const removeAll = useCart((state) => state.removeAll);
-  const [orderID, setOrderID] = useState<string | null>(null);
   const cart = useCart();
-
-  const { quantity } = cart;
+  const { items, removeAll, cartItems } = cart; // Destructure cartItems directly from the useCart store
+  const [orderID, setOrderID] = useState<string | null>(null);
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
   useEffect(() => {
@@ -33,18 +30,15 @@ const Summary = () => {
     }
 
     const newTotalPrice = items.reduce((total, item) => {
-      return total + Number(item.price) * quantity;
+      return total + Number(item.price) * (cartItems[item.id] || 0);
     }, 0);
 
     setTotalPrice(newTotalPrice);
-  }, [searchParams, removeAll, items, quantity]);
-
-  const currentItems = useCart.getState().items;
-  console.log(currentItems);
+  }, [searchParams, removeAll, items, cartItems]);
 
   const onCheckout = async () => {
     const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/checkout`, {
-      productIds: items.map((item) => item.id)
+      productIds: items.map((item) => item.id),
     });
     const { orderID } = response.data;
     setOrderID(orderID);
@@ -68,16 +62,13 @@ const Summary = () => {
         <PayPalButtons
           style={{
             color: "black",
-            layout: "horizontal"
+            layout: "horizontal",
           }}
           createOrder={async (data, actions) => {
             try {
-              // Fetch the current state of the cart items
-              const currentItems = useCart.getState().items;
-
               // Calculate the total price based on the current state of the cart
-              const currentTotalPrice = currentItems.reduce(
-                (total, item) => total + Number(item.price) * quantity,
+              const currentTotalPrice = items.reduce(
+                (total, item) => total + Number(item.price) * (cartItems[item.id] || 0),
                 0
               );
 
@@ -106,6 +97,7 @@ const Summary = () => {
               throw error;
             }
           }}
+
           onApprove={async (data, actions) => {
             try {
               const orderDetails = await actions.order?.get();
@@ -127,6 +119,7 @@ const Summary = () => {
               console.error(error);
             }
           }}
+
           onCancel={async (data) => {
             console.log("It has been canceled: ", data)
             toast.error('Payment canceled.');

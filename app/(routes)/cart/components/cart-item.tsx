@@ -33,6 +33,7 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
 
     if (quantityInCart <= inStock) {
       setCartItems((prevItems) => ({ ...prevItems, [data.id]: quantityInCart }));
+      cart.addItem(data)
     } else {
       console.log('Out of Stock');
       // toast.error('We ran out of Stock!');
@@ -44,6 +45,7 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
 
     if (quantityInCart >= 0) {
       setCartItems((prevItems) => ({ ...prevItems, [data.id]: quantityInCart }));
+      cart.removeItem(data.id);
     } else {
       quantityInCart = 0;
       console.log('Minimum 0');
