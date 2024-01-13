@@ -41,8 +41,10 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
       cart.incrementQuantity(data.id);
       setCartItems((prevItems) => ({ ...prevItems, [data.id]: quantityInCart }));
       // cart.onChevronUp(data); // Assuming this function handles the cart update
+      toast('Quantity increased')
     } else {
       console.log('Out of Stock');
+      toast('No more items available!')
       // toast.error('We ran out of Stock!');
     }
   };
@@ -54,6 +56,7 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
       cart.decrementQuantity(data.id);
       setCartItems((prevItems) => ({ ...prevItems, [data.id]: quantityInCart }));
       // cart.onChevronDown(data.id); // Assuming this function handles the cart update
+      toast('Quantity decreased')
     } else {
       quantityInCart = 0;
       console.log('Minimum 0');

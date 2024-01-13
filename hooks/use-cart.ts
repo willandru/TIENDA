@@ -61,7 +61,7 @@ const useCart = create<CartStore>((set, get) => ({
       updatedCartItems[data.id] = (updatedCartItems[data.id] || 0) + 1;
       return { cartItems: updatedCartItems };
     });
-    toast('Item quantity increased.');
+    
   }
   ,
   onChevronDown:(id: string) => {
@@ -76,7 +76,7 @@ const useCart = create<CartStore>((set, get) => ({
     } 
 
     set({ items: updatedItems, cartItems: updatedCartItems });
-    toast.success('Item removed from cart.');
+    
   }
   ,
   removeItem: (id: string) => {
@@ -90,7 +90,7 @@ const useCart = create<CartStore>((set, get) => ({
     }
 
     set({ items: updatedItems, cartItems: updatedCartItems });
-    toast.success('Item removed from cart.');
+    toast.success('Item removed from cart');
   },
   // quantity: 1,
   // value: '',
