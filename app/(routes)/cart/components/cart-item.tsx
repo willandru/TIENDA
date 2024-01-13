@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { X, ChevronDown, ChevronUp } from "lucide-react";
+import { v4 as uuidv4 } from 'uuid';
 
 import IconButton from "@/components/ui/icon-button";
 import Currency from "@/components/ui/currency";
@@ -23,6 +24,11 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
     setCartItems((prevItems) => ({ ...prevItems, [data.id]: 1 }));
   }, [data.id]);
 
+  useEffect(() => {
+    // Update the quantity when cartItems change externally
+    setCartItems((prevItems) => ({ ...prevItems, [data.id]: cart.cartItems[data.id] || 0 }));
+  }, [cart.cartItems, data.id]);
+
   const onRemove = () => {
     cart.removeItem(data.id);
   };
@@ -32,8 +38,9 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
     const quantityInCart = cartItems[data.id] ? cartItems[data.id] + 1 : 1;
 
     if (quantityInCart <= inStock) {
+      cart.incrementQuantity(data.id);
       setCartItems((prevItems) => ({ ...prevItems, [data.id]: quantityInCart }));
-      cart.addItem(data)
+      // cart.onChevronUp(data); // Assuming this function handles the cart update
     } else {
       console.log('Out of Stock');
       // toast.error('We ran out of Stock!');
@@ -43,9 +50,10 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
   const handleDecrement = () => {
     let quantityInCart = cartItems[data.id] ? cartItems[data.id] - 1 : 0;
 
-    if (quantityInCart >= 0) {
+    if (quantityInCart >= 1) {
+      cart.decrementQuantity(data.id);
       setCartItems((prevItems) => ({ ...prevItems, [data.id]: quantityInCart }));
-      cart.removeItem(data.id);
+      // cart.onChevronDown(data.id); // Assuming this function handles the cart update
     } else {
       quantityInCart = 0;
       console.log('Minimum 0');
@@ -53,10 +61,11 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
     }
   };
 
+  const cartItemKey = uuidv4();
   const totalPrice = Number(data.price) * cartItems[data.id];
 
   return (
-    <li className="flex py-6 border-b">
+    <li key={cartItemKey} className="flex py-6 border-b">
       <div className="relative h-24 w-24 rounded-md overflow-hidden sm:h-48 sm:w-48">
         <Image fill src={data.images[0].url} alt="" className="object-cover object-center" />
       </div>
