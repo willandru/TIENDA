@@ -70,6 +70,14 @@ const Summary = () => {
                 0
               );
 
+              /*const newTotalPrice = items.reduce(
+                (total, item) => total + Number(item.price) * (cartItems[item.id] || 0),
+                0
+              );
+              // Calculate the total price based on the current state of the cart
+              const currentTotalPrice = newTotalPrice
+              */
+
               // Check if totalPrice is 0
               if (currentTotalPrice <= 0) {
                 toast.error('Amount cannot be zero.');

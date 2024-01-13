@@ -11,6 +11,8 @@ import useCart from "@/hooks/use-cart";
 import { Product } from "@/types";
 import { useState, useEffect } from "react";
 
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+
 interface CartItemProps {
   data: Product;
 }
@@ -68,7 +70,8 @@ const CartItem: React.FC<CartItemProps> = ({ data }) => {
   const totalPrice = Number(data.price) * cartItems[data.id];
 
   return (
-    <li key={cartItemKey} className="flex py-6 border-b">
+    
+    <li key={cartItemKey} className="flex py-6 border-b" >
       <div className="relative h-24 w-24 rounded-md overflow-hidden sm:h-48 sm:w-48">
         <Image fill src={data.images[0].url} alt="" className="object-cover object-center" />
       </div>
